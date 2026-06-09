@@ -1,48 +1,36 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <link rel="manifest" href="manifest.json">
-
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('./sw.js');
-}
-</script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>肺癌医学影像分析系统 | 폐암 의료 영상 분석 시스템</title>
-    <!-- 使用现代字体和图标库 -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+    <title>肺结析Pro | LungNodule AI | 폐결절 분석 시스템</title>
+    <!-- 字体、图标、图表库 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e9f0f5 0%, #d9e2ec 100%);
+            background: linear-gradient(145deg, #ecf3f8 0%, #dce5ec 100%);
             min-height: 100vh;
             padding: 20px;
-            color: #1e2a3e;
+            color: #1a2c3e;
         }
-
-        /* 主容器 */
         .container {
-            max-width: 1400px;
+            max-width: 1500px;
             margin: 0 auto;
-            background: rgba(255,255,255,0.85);
+            background: rgba(255,255,255,0.88);
             backdrop-filter: blur(2px);
-            border-radius: 40px;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
+            border-radius: 44px;
+            box-shadow: 0 30px 45px rgba(0,0,0,0.1);
             overflow: hidden;
             padding: 24px 28px;
-            transition: all 0.3s ease;
         }
-
-        /* 头部 */
         .header {
             display: flex;
             justify-content: space-between;
@@ -50,229 +38,134 @@ if ('serviceWorker' in navigator) {
             flex-wrap: wrap;
             margin-bottom: 28px;
             padding-bottom: 16px;
-            border-bottom: 2px solid rgba(60, 110, 113, 0.2);
+            border-bottom: 2px solid rgba(46, 109, 106, 0.2);
         }
-
         .title-section h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(120deg, #1f5e5f, #2c8f8c);
+            font-size: 1.9rem;
+            font-weight: 800;
+            background: linear-gradient(130deg, #1B5E5A, #2C9A8F);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            letter-spacing: -0.3px;
         }
-
-        .title-section p {
-            font-size: 0.85rem;
-            color: #4a627a;
-            margin-top: 6px;
-        }
-
         .lang-switch {
             display: flex;
             gap: 12px;
-            background: #ffffffcc;
-            padding: 8px 16px;
+            background: #ffffffdd;
+            padding: 6px 18px;
             border-radius: 60px;
-            backdrop-filter: blur(4px);
         }
-
         .lang-btn {
             background: none;
             border: none;
             font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
             padding: 6px 18px;
             border-radius: 40px;
-            transition: all 0.2s;
-            color: #2c5f6e;
+            cursor: pointer;
+            color: #2c6e6b;
         }
-
         .lang-btn.active {
             background: #1f6e6b;
             color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
-
-        /* 两列布局 */
         .dashboard {
             display: flex;
-            gap: 28px;
+            gap: 24px;
             flex-wrap: wrap;
         }
-
-        .image-panel {
-            flex: 1.2;
-            min-width: 280px;
+        .image-panel, .analysis-panel, .report-panel {
             background: #ffffffcc;
+            backdrop-filter: blur(4px);
             border-radius: 32px;
             padding: 20px;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.04);
         }
-
-        .analysis-panel {
-            flex: 0.9;
-            min-width: 280px;
-            background: #ffffffcc;
-            border-radius: 32px;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-
+        .image-panel { flex: 1.2; min-width: 280px; }
+        .analysis-panel { flex: 0.9; min-width: 260px; }
+        .report-panel { flex: 1; min-width: 280px; }
         .upload-area {
-            border: 2px dashed #8bb5b3;
+            border: 2px dashed #80b7b2;
             border-radius: 28px;
-            padding: 28px 16px;
+            padding: 24px 12px;
             text-align: center;
             cursor: pointer;
-            transition: all 0.25s;
-            background: #f8fafd;
-            margin-bottom: 20px;
+            background: #fafefe;
+            margin-bottom: 18px;
         }
-
-        .upload-area:hover {
-            border-color: #2c8f8c;
-            background: #eef3f2;
-        }
-
-        .upload-area i {
-            font-size: 48px;
-            color: #468b8a;
-            margin-bottom: 10px;
-        }
-
+        .upload-area i { font-size: 44px; color: #3e8a87; }
         .image-preview {
-            background: #1e2a2e10;
-            border-radius: 24px;
+            background: #eef3f1;
+            border-radius: 28px;
             text-align: center;
-            min-height: 380px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            min-height: 340px;
         }
-
-        canvas {
+        canvas#imageCanvas {
             max-width: 100%;
             border-radius: 24px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            background: #00000010;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.1);
+            background: #cbdcd9;
         }
-
         .btn-group {
-            margin-top: 20px;
+            margin-top: 18px;
             display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: center;
         }
-
         .btn {
-            background: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 48px;
+            padding: 10px 22px;
+            border-radius: 40px;
             font-weight: 600;
-            font-size: 0.9rem;
             cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
             display: inline-flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-
-        .btn-primary {
-            background: #236e6b;
-            color: white;
-            box-shadow: 0 6px 14px rgba(35,110,107,0.3);
-        }
-
-        .btn-primary:hover {
-            background: #1b5755;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            border: 1px solid #7f9e9b;
-            background: transparent;
-        }
-
-        .result-card {
-            background: #f2f6f9;
-            border-radius: 24px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .metric {
+        .btn-primary { background: #236e6b; color: white; box-shadow: 0 5px 12px rgba(35,110,107,0.3); }
+        .btn-outline { border: 1px solid #7ba29e; background: white; }
+        .stat-card { background: #eff6f4; border-radius: 24px; padding: 14px; margin-bottom: 18px; }
+        .metric-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 18px;
-            border-bottom: 1px solid #cddfe4;
-            padding-bottom: 8px;
+            margin-bottom: 12px;
+            border-bottom: 1px solid #cce0dc;
+            padding-bottom: 6px;
         }
-
-        .risk-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-
-        .risk-high {
-            background: #d9534f;
-            color: white;
-        }
-        .risk-mid {
-            background: #f0ad4e;
-            color: white;
-        }
-        .risk-low {
-            background: #5cb85c;
-            color: white;
-        }
-
-        .nodule-list {
-            max-height: 220px;
-            overflow-y: auto;
-            font-size: 0.85rem;
-        }
-
+        .risk-gauge { text-align: center; margin: 10px 0; }
+        canvas#riskChart { max-width: 120px; max-height: 120px; margin: 0 auto; }
+        .nodule-list { max-height: 200px; overflow-y: auto; font-size: 0.8rem; }
         .nodule-item {
             background: white;
             border-radius: 18px;
-            padding: 10px;
+            padding: 8px 12px;
             margin-bottom: 8px;
             display: flex;
             justify-content: space-between;
         }
-
+        .report-text {
+            background: #eef3f0;
+            border-radius: 20px;
+            padding: 14px;
+            margin-top: 15px;
+            font-size: 0.8rem;
+        }
         footer {
-            margin-top: 32px;
+            margin-top: 28px;
             text-align: center;
-            font-size: 0.75rem;
-            color: #5b7c7a;
+            font-size: 0.7rem;
+            color: #5e807c;
             border-top: 1px solid rgba(0,0,0,0.05);
-            padding-top: 20px;
+            padding-top: 16px;
         }
-
-        @media (max-width: 800px) {
-            .container { padding: 16px; }
-            .btn { padding: 8px 16px; }
-        }
+        @media (max-width: 1000px) { .dashboard { flex-direction: column; } }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header">
         <div class="title-section">
-            <h1><i class="fas fa-lungs"></i> LungVision AI | 폐암 분석 시스템</h1>
-            <p data-key="subtitle">의료 영상 기반 폐 결절 탐지 및 위험도 평가 | 基于深度学习的肺结节智能分析</p>
+            <h1><i class="fas fa-lungs"></i> LungNodule AI | 폐결절 정밀분석</h1>
+            <p data-key="subtitle">형태학적 필터링 기반 폐 결절 탐지 + 통계 차트 · 形态学过滤 + 智能图表报告</p>
         </div>
         <div class="lang-switch">
             <button class="lang-btn active" data-lang="zh">🇨🇳 中文</button>
@@ -281,1224 +174,468 @@ if ('serviceWorker' in navigator) {
     </div>
 
     <div class="dashboard">
-        <!-- 影像区域 -->
+        <!-- 左侧影像区 -->
         <div class="image-panel">
             <div class="upload-area" id="uploadArea">
                 <i class="fas fa-cloud-upload-alt"></i>
-                <p data-key="dragText">클릭 또는 드래그하여 CT/엑스레이 업로드 | 点击或拖拽上传肺部影像 (CT/X光)</p>
-                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg,image/bmp" style="display: none;">
-                <small style="display: block; margin-top: 8px;" data-key="formatHint">지원: JPG, PNG (권장 CT 또는 흉부 영상) | 支持JPG/PNG格式</small>
+                <p data-key="dragText">클릭/드래그로 CT/X-ray 업로드 | 点击或拖拽上传肺部影像</p>
+                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg" style="display: none;">
+                <small data-key="formatHint">JPG/PNG 지원 | 支持JPG/PNG</small>
             </div>
             <div class="image-preview">
-                <canvas id="imageCanvas" width="500" height="400" style="width:100%; height:auto; background:#eef2f0;"></canvas>
+                <canvas id="imageCanvas" width="500" height="380" style="width:100%; height:auto; background:#d9e2df;"></canvas>
                 <div class="btn-group">
-                    <button class="btn btn-primary" id="analyzeBtn"><i class="fas fa-microscope"></i> <span data-key="analyzeBtn">분석 시작 | 开始分析</span></button>
-                    <button class="btn btn-outline" id="clearBtn"><i class="fas fa-trash-alt"></i> <span data-key="clearBtn">초기화 | 清除图像</span></button>
+                    <button class="btn btn-primary" id="analyzeBtn"><i class="fas fa-microscope"></i> <span data-key="analyzeBtn">정밀 분석 | 精准分析</span></button>
+                    <button class="btn btn-outline" id="clearBtn"><i class="fas fa-eraser"></i> <span data-key="clearBtn">초기화 | 清除</span></button>
                 </div>
             </div>
         </div>
 
-        <!-- 分析结果区域 -->
+        <!-- 中间分析区 + 圆环图 -->
         <div class="analysis-panel">
-            <h3><i class="fas fa-chart-line"></i> <span data-key="resultTitle">진단 리포트 | 诊断报告</span></h3>
-            <div class="result-card">
-                <div class="metric">
-                    <span><i class="fas fa-microscope"></i> <span data-key="noduleCount">발견된 결절 | 结节数量</span></span>
+            <h3><i class="fas fa-chart-simple"></i> <span data-key="resultTitle">진단 지표 | 诊断指标</span></h3>
+            <div class="stat-card">
+                <div class="metric-item">
+                    <span><i class="fas fa-microscope"></i> <span data-key="noduleCount">결절 개수 | 结节数</span></span>
                     <span id="noduleCountValue">—</span>
                 </div>
-                <div class="metric">
-                    <span><i class="fas fa-arrows-alt"></i> <span data-key="maxSize">최대 결절 크기 | 最大结节直径</span></span>
+                <div class="metric-item">
+                    <span><i class="fas fa-arrows-alt"></i> <span data-key="maxSize">최대 직경 | 最大直径</span></span>
                     <span id="maxSizeValue">—</span>
                 </div>
-                <div class="metric">
-                    <span><i class="fas fa-exclamation-triangle"></i> <span data-key="riskLevel">위험도 평가 | 风险评估</span></span>
+                <div class="metric-item">
+                    <span><i class="fas fa-chart-line"></i> <span data-key="riskLevel">위험 지수 | 风险评分</span></span>
                     <span id="riskLevelValue">—</span>
                 </div>
-                <div id="riskBadge" style="margin: 5px 0 10px 0;"></div>
-                <div style="margin-top: 10px;">
-                    <div><strong><i class="fas fa-list-ul"></i> <span data-key="noduleDetails">결절 상세 | 结节详情</span></strong></div>
-                    <div id="noduleListPanel" class="nodule-list">
-                        <div style="text-align:center; color:#7c8f8c;"><span data-key="noDataMsg">분석 결과가 여기에 표시됩니다 | 分析后显示结节信息</span></div>
-                    </div>
+                <div id="riskBadge" style="margin-top: 5px;"></div>
+            </div>
+            <div class="risk-gauge">
+                <canvas id="riskChart" width="120" height="120"></canvas>
+            </div>
+            <div>
+                <strong><i class="fas fa-list-ul"></i> <span data-key="noduleDetails">결절 상세 | 结节详情</span></strong>
+                <div id="noduleListPanel" class="nodule-list">
+                    <div style="text-align:center; color:#65807b;"><span data-key="noDataMsg">분석 후 표시 | 分析后显示</span></div>
                 </div>
-                <div style="margin-top: 12px; font-size:0.75rem; background:#eaf2f0; border-radius:20px; padding:8px;">
-                    <i class="fas fa-info-circle"></i> <span data-key="disclaimer">* 영상 처리 기반 시뮬레이션 분석 (실제 임상 진단은 전문의와 상담하세요) | *基于图像处理模拟分析，实际诊断请咨询专业医师</span>
-                </div>
+            </div>
+        </div>
+
+        <!-- 右侧图表 + 文字报告 -->
+        <div class="report-panel">
+            <h3><i class="fas fa-chart-bar"></i> <span data-key="chartTitle">크기 분포 | 尺寸分布</span></h3>
+            <canvas id="sizeChart" width="400" height="200" style="max-width:100%; background:#fefefe; border-radius: 20px;"></canvas>
+            <div class="report-text" id="dynamicReport">
+                <i class="fas fa-info-circle"></i> <span data-key="reportPlaceholder">분석 실행 시 상세 리포트 | 执行分析生成详细报告</span>
+            </div>
+            <div style="margin-top: 12px; font-size:0.7rem; background:#eef2f0; border-radius:18px; padding:6px 10px;">
+                <i class="fas fa-flask"></i> <span data-key="disclaimer">* 형태학적 시뮬레이션 (참고용) | *形态学模拟分析，仅供科研参考</span>
             </div>
         </div>
     </div>
-    <footer>
-        <span data-key="footer">LungVision AI | 혁신적인 폐암 스크리닝 지원 | 肺癌智能辅助筛查系统 (데모 버전 / 演示版)</span>
-    </footer>
+    <footer><span data-key="footer">LungNodule AI | 폐결절 보조 진단 | 智能结节分析 (형태학 기반 / 基于形态学)</span></footer>
 </div>
 
 <script>
-    // ---------- 双语字典 (中-韩) ----------
-    const translations = {
+    // ---------- 双语 ----------
+    const trans = {
         zh: {
-            subtitle: "의료 영상 기반 폐 결절 탐지 및 위험도 평가 | 基于深度学习的肺结节智能分析",
-            dragText: "클릭 또는 드래그하여 CT/엑스레이 업로드 | 点击或拖拽上传肺部影像 (CT/X光)",
-            formatHint: "지원: JPG, PNG (권장 CT 또는 흉부 영상) | 支持JPG/PNG格式",
-            analyzeBtn: "분석 시작 | 开始分析",
-            clearBtn: "초기화 | 清除图像",
-            resultTitle: "진단 리포트 | 诊断报告",
-            noduleCount: "발견된 결절 | 结节数量",
-            maxSize: "최대 결절 크기 | 最大结节直径",
-            riskLevel: "위험도 평가 | 风险评估",
+            subtitle: "형태학적 필터링 기반 폐 결절 탐지 + 통계 차트 · 形态学过滤 + 智能图表报告",
+            dragText: "클릭/드래그로 CT/X-ray 업로드 | 点击或拖拽上传肺部影像",
+            formatHint: "JPG/PNG 지원 | 支持JPG/PNG",
+            analyzeBtn: "정밀 분석 | 精准分析",
+            clearBtn: "초기화 | 清除",
+            resultTitle: "진단 지표 | 诊断指标",
+            noduleCount: "결절 개수 | 结节数",
+            maxSize: "최대 직경 | 最大直径",
+            riskLevel: "위험 지수 | 风险评分",
             noduleDetails: "결절 상세 | 结节详情",
-            noDataMsg: "분석 결과가 여기에 표시됩니다 | 分析后显示结节信息",
-            disclaimer: "* 영상 처리 기반 시뮬레이션 분석 (실제 임상 진단은 전문의와 상담하세요) | *基于图像处理模拟分析，实际诊断请咨询专业医师",
-            footer: "LungVision AI | 혁신적인 폐암 스크리닝 지원 | 肺癌智能辅助筛查系统 (데모 버전 / 演示版)",
-            risk_low: "낮음 | 低风险",
-            risk_mid: "중간 | 中风险",
-            risk_high: "높음 | 高风险",
-            nodule_item_prefix: "결절 #",
-            size_mm: "mm",
-            noduleSize: "크기"
+            noDataMsg: "분석 후 표시 | 分析后显示",
+            chartTitle: "크기 분포 | 尺寸分布",
+            reportPlaceholder: "분석 실행 시 상세 리포트 | 执行分析生成详细报告",
+            disclaimer: "* 형태학적 시뮬레이션 (참고용) | *形态学模拟分析，仅供科研参考",
+            footer: "LungNodule AI | 폐결절 보조 진단 | 智能结节分析 (형태학 기반 / 基于形态学)",
+            risk_low: "저위험 | 低风险",
+            risk_mid: "중간 위험 | 中风险",
+            risk_high: "고위험 | 高风险",
+            followup: "정기 추적 관찰 권장 (6~12개월 후 재검) | 建议定期随访",
+            further: "전문의 상담 및 추가 검사 권장 | 建议专科咨询",
+            nodule_prefix: "결절"
         },
         ko: {
-            subtitle: "의료 영상 기반 폐 결절 탐지 및 위험도 평가",
-            dragText: "클릭 또는 드래그하여 CT/엑스레이 업로드",
-            formatHint: "지원: JPG, PNG (권장 CT 또는 흉부 영상)",
-            analyzeBtn: "분석 시작",
+            subtitle: "형태학적 필터링 기반 폐 결절 탐지 + 통계 차트",
+            dragText: "클릭/드래그로 CT/X-ray 업로드",
+            formatHint: "JPG/PNG 지원",
+            analyzeBtn: "정밀 분석",
             clearBtn: "초기화",
-            resultTitle: "진단 리포트",
-            noduleCount: "발견된 결절",
-            maxSize: "최대 결절 크기",
-            riskLevel: "위험도 평가",
+            resultTitle: "진단 지표",
+            noduleCount: "결절 개수",
+            maxSize: "최대 직경",
+            riskLevel: "위험 지수",
             noduleDetails: "결절 상세",
-            noDataMsg: "분석 결과가 여기에 표시됩니다",
-            disclaimer: "* 영상 처리 기반 시뮬레이션 분석 (실제 임상 진단은 전문의와 상담하세요)",
-            footer: "LungVision AI | 혁신적인 폐암 스크리닝 지원 (데모 버전)",
-            risk_low: "낮음",
-            risk_mid: "중간",
-            risk_high: "높음",
-            nodule_item_prefix: "결절 #",
-            size_mm: "mm",
-            noduleSize: "크기"
+            noDataMsg: "분석 후 표시",
+            chartTitle: "크기 분포",
+            reportPlaceholder: "분석 실행 시 상세 리포트",
+            disclaimer: "* 형태학적 시뮬레이션 (참고용)",
+            footer: "LungNodule AI | 폐결절 보조 진단 (형태학 기반)",
+            risk_low: "저위험",
+            risk_mid: "중간 위험",
+            risk_high: "고위험",
+            followup: "정기 추적 관찰 권장 (6~12개월 후 재검)",
+            further: "전문의 상담 및 추가 검사 권장",
+            nodule_prefix: "결절"
         }
     };
-
     let currentLang = 'zh';
-    let currentImage = null;       // 存储原图Image对象
-    let currentCanvas = null;      // canvas元素
-    let currentCtx = null;
-    let currentAnalysisResult = { nodules: [], riskScore: 0, maxDiameter: 0 };
+    let currentImage = null;
+    let canvas = document.getElementById('imageCanvas');
+    let ctx = canvas.getContext('2d');
+    let analysisData = { nodules: [], riskScore: 0, maxDiameter: 0 };
+    let riskChartInstance = null, sizeChartInstance = null;
 
-    // DOM 元素
-    const canvas = document.getElementById('imageCanvas');
-    const ctx = canvas.getContext('2d');
-    const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.getElementById('uploadArea');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const clearBtn = document.getElementById('clearBtn');
-
-    currentCanvas = canvas;
-    currentCtx = ctx;
-
-    // 语言切换逻辑
-    function updateLanguage() {
+    function updateUIByLang() {
         document.querySelectorAll('[data-key]').forEach(el => {
             const key = el.getAttribute('data-key');
-            if (translations[currentLang][key]) {
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.placeholder = translations[currentLang][key];
-                } else {
-                    el.innerText = translations[currentLang][key];
-                }
-            }
+            if (trans[currentLang][key]) el.innerText = trans[currentLang][key];
         });
-        // 更新动态的内容（结节详情面板/风险标签）
-        if (currentAnalysisResult && currentAnalysisResult.nodules.length > 0) {
-            renderNoduleList(currentAnalysisResult.nodules);
-            updateRiskUI(currentAnalysisResult.riskScore, currentAnalysisResult.maxDiameter);
+        if (analysisData.nodules.length) {
+            renderNoduleList(analysisData.nodules);
+            renderReportText(analysisData.riskScore, analysisData.maxDiameter, analysisData.nodules.length);
         } else {
-            // 如果没有分析结果，显示占位符
-            if (currentAnalysisResult.nodules.length === 0) {
-                const placeholderDiv = document.getElementById('noduleListPanel');
-                if (placeholderDiv) placeholderDiv.innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-            }
+            document.getElementById('noduleListPanel').innerHTML = `<div style="color:#65807b;">${trans[currentLang].noDataMsg}</div>`;
+            document.getElementById('dynamicReport').innerHTML = `<i class="fas fa-info-circle"></i> ${trans[currentLang].reportPlaceholder}`;
         }
-        // 更新统计数字（如果存在结果）
-        if (currentAnalysisResult.nodules.length) {
-            document.getElementById('noduleCountValue').innerText = currentAnalysisResult.nodules.length;
-            document.getElementById('maxSizeValue').innerText = currentAnalysisResult.maxDiameter > 0 ? currentAnalysisResult.maxDiameter.toFixed(1) + ' mm' : '—';
-            let riskText = '';
-            if (currentAnalysisResult.riskScore < 0.35) riskText = translations[currentLang].risk_low;
-            else if (currentAnalysisResult.riskScore < 0.65) riskText = translations[currentLang].risk_mid;
-            else riskText = translations[currentLang].risk_high;
-            document.getElementById('riskLevelValue').innerText = riskText;
-        } else {
-            if(!currentAnalysisResult.nodules.length) {
-                document.getElementById('noduleCountValue').innerText = '—';
-                document.getElementById('maxSizeValue').innerText = '—';
-                document.getElementById('riskLevelValue').innerText = '—';
-                document.getElementById('riskBadge').innerHTML = '';
-            }
-        }
+        updateMetricsUI();
+        if (analysisData.riskScore > 0) updateRiskGauge(analysisData.riskScore);
+        if (analysisData.nodules.length) updateSizeChart(analysisData.nodules);
+        else if(sizeChartInstance) { sizeChartInstance.destroy(); sizeChartInstance=null; }
+    }
+    function setLanguage(lang) { currentLang = lang; updateUIByLang(); document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.toggle('active', btn.getAttribute('data-lang')===lang)); }
+
+    function updateMetricsUI() {
+        document.getElementById('noduleCountValue').innerText = analysisData.nodules.length || '—';
+        document.getElementById('maxSizeValue').innerText = analysisData.maxDiameter>0 ? analysisData.maxDiameter.toFixed(1)+' mm' : '—';
+        let riskText = '';
+        if (analysisData.riskScore < 0.35) riskText = trans[currentLang].risk_low;
+        else if (analysisData.riskScore < 0.65) riskText = trans[currentLang].risk_mid;
+        else riskText = trans[currentLang].risk_high;
+        document.getElementById('riskLevelValue').innerText = analysisData.riskScore>0 ? `${riskText} (${(analysisData.riskScore*100).toFixed(0)}%)` : '—';
+        const badgeDiv = document.getElementById('riskBadge');
+        if(analysisData.nodules.length){
+            let color = analysisData.riskScore<0.35?'#5cb85c':(analysisData.riskScore<0.65?'#f0ad4e':'#d9534f');
+            badgeDiv.innerHTML = `<span style="background:${color}; color:white; padding:5px 12px; border-radius:40px; font-size:0.75rem;">${riskText}</span>`;
+        } else badgeDiv.innerHTML = '';
     }
 
-    function setLanguage(lang) {
-        currentLang = lang;
-        updateLanguage();
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
-            else btn.classList.remove('active');
+    function updateRiskGauge(score) {
+        const canvasRisk = document.getElementById('riskChart');
+        if (!canvasRisk) return;
+        if (riskChartInstance) riskChartInstance.destroy();
+        const ctxRisk = canvasRisk.getContext('2d');
+        riskChartInstance = new Chart(ctxRisk, {
+            type: 'doughnut',
+            data: { datasets: [{ data: [score, 1-score], backgroundColor: ['#e67e22', '#dddddd'], borderWidth: 0, circumference: 360, rotation: -90 }] },
+            options: { cutout: '70%', responsive: true, maintainAspectRatio: true, plugins: { tooltip: { enabled: false }, legend: { display: false } } }
+        });
+        setTimeout(() => {
+            const cw = canvasRisk.width, ch = canvasRisk.height;
+            ctxRisk.font = 'bold 16px "Inter"';
+            ctxRisk.fillStyle = '#1f5e5a';
+            ctxRisk.textAlign = 'center';
+            ctxRisk.textBaseline = 'middle';
+            ctxRisk.fillText(`${Math.round(score*100)}%`, cw/2, ch/2);
+        }, 10);
+    }
+
+    function updateSizeChart(nodules) {
+        const chartCanvas = document.getElementById('sizeChart');
+        if (!chartCanvas) return;
+        if (sizeChartInstance) sizeChartInstance.destroy();
+        if (!nodules.length) {
+            const sctx = chartCanvas.getContext('2d');
+            sctx.clearRect(0,0,chartCanvas.width,chartCanvas.height);
+            sctx.fillStyle = '#aaa';
+            sctx.fillText(trans[currentLang].noDataMsg, 20,40);
+            return;
+        }
+        const sizes = nodules.map(n => n.diameterMm);
+        const labels = nodules.map((_,i)=> `${trans[currentLang].nodule_prefix} ${i+1}`);
+        sizeChartInstance = new Chart(chartCanvas, {
+            type: 'bar',
+            data: { labels, datasets: [{ label: currentLang==='zh'?'结节直径 (mm)':'결절 직경 (mm)', data: sizes, backgroundColor: '#47918e', borderRadius: 8 }] },
+            options: { responsive: true, maintainAspectRatio: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'mm' } } } }
         });
     }
 
-    // 上传图片逻辑
-    function handleImageUpload(file) {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                currentImage = img;
-                // 设置canvas尺寸适应图片比例 (最大宽度500px)
-                const maxWidth = 500;
-                let width = img.width;
-                let height = img.height;
-                if (width > maxWidth) {
-                    height = height * (maxWidth / width);
-                    width = maxWidth;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                currentCtx.drawImage(img, 0, 0, width, height);
-                // 重置分析结果
-                currentAnalysisResult = { nodules: [], riskScore: 0, maxDiameter: 0 };
-                document.getElementById('noduleCountValue').innerText = '—';
-                document.getElementById('maxSizeValue').innerText = '—';
-                document.getElementById('riskLevelValue').innerText = '—';
-                document.getElementById('riskBadge').innerHTML = '';
-                document.getElementById('noduleListPanel').innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-            };
-            img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
+    function renderReportText(riskScore, maxDiameter, noduleCount) {
+        const reportDiv = document.getElementById('dynamicReport');
+        let conclusion = '', advice = '';
+        if (noduleCount === 0) {
+            conclusion = currentLang === 'zh' ? '🔍 未检出明确肺结节，影像特征良好。' : '🔍 명확한 폐 결절 미검출, 영상 특징 양호.';
+            advice = currentLang === 'zh' ? '✅ 建议常规年度随访。' : '✅ 정기적 연간 추적 관찰 권장.';
+        } else {
+            if (riskScore < 0.35) {
+                conclusion = currentLang === 'zh' ? `📊 检出 ${noduleCount} 个微小结节，形态规则，风险较低。` : `📊 ${noduleCount}개의 작은 결절, 형태 규칙적, 위험 낮음.`;
+                advice = trans[currentLang].followup;
+            } else if (riskScore < 0.65) {
+                conclusion = currentLang === 'zh' ? `⚠️ 检出 ${noduleCount} 个结节，最大 ${maxDiameter.toFixed(1)} mm，部分边缘欠规则。` : `⚠️ ${noduleCount}개 결절, 최대 ${maxDiameter.toFixed(1)} mm, 일부 경계 불규칙.`;
+                advice = currentLang === 'zh' ? '📌 建议短期复查 (3-6个月) 或增强CT。' : '📌 단기 추적 검사 (3~6개월) 또는 조영증강 CT 권장.';
+            } else {
+                conclusion = currentLang === 'zh' ? `🚨 高危结节：${noduleCount} 个，最大 ${maxDiameter.toFixed(1)} mm，形态可疑。` : `🚨 고위험 결절: ${noduleCount}개, 최대 ${maxDiameter.toFixed(1)} mm, 의심스러운 형태.`;
+                advice = trans[currentLang].further;
+            }
+        }
+        reportDiv.innerHTML = `<strong><i class="fas fa-stethoscope"></i> ${currentLang==='zh'?'影像学结论':'영상의학 결론'}</strong><br>${conclusion}<br><br>
+                               <strong><i class="fas fa-clinic-medical"></i> ${currentLang==='zh'?'临床建议':'임상 권고'}</strong><br>${advice}`;
     }
 
-    // ------------- 高级图像分析: 肺结节候选检测 (连通区域+圆形度+灰度阈值) -------------
-    // 预处理: 转为灰度, 自适应阈值寻找亮区域 (结节通常较高密度)
-    function findNoduleCandidates(imageData, width, height) {
-        // 灰度数组
-        let gray = new Uint8ClampedArray(width * height);
-        for (let i = 0; i < imageData.data.length; i += 4) {
-            let r = imageData.data[i];
-            let g = imageData.data[i+1];
-            let b = imageData.data[i+2];
-            let gr = 0.299 * r + 0.587 * g + 0.114 * b;
-            gray[i/4] = gr;
+    // ---------- 改进的结节检测：肺野约束、形态学严格过滤、边缘排除 ----------
+    function preprocessGray(imageData, width, height) {
+        let gray = new Uint8ClampedArray(width*height);
+        for(let i=0;i<imageData.data.length;i+=4){
+            let r=imageData.data[i], g=imageData.data[i+1], b=imageData.data[i+2];
+            gray[i/4] = 0.299*r + 0.587*g + 0.114*b;
         }
-        // 使用大津法 (Otsu) 二值化，但更稳健: 采用均值+标准差提取高亮区域
-        let sum = 0;
-        for (let i = 0; i < gray.length; i++) sum += gray[i];
-        let mean = sum / gray.length;
-        let variance = 0;
-        for (let i = 0; i < gray.length; i++) variance += (gray[i] - mean) ** 2;
-        let std = Math.sqrt(variance / gray.length);
-        let threshold = mean + std * 0.6;  // 高亮区域通常代表结节或致密组织
-        // 二值化
-        let binary = new Uint8Array(width * height);
-        for (let i = 0; i < gray.length; i++) {
-            binary[i] = (gray[i] > threshold) ? 1 : 0;
+        // 简单中值滤波 (3x3) 去噪
+        let filtered = new Uint8ClampedArray(width*height);
+        for(let y=1; y<height-1; y++){
+            for(let x=1; x<width-1; x++){
+                let vals = [];
+                for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++) vals.push(gray[(y+dy)*width+(x+dx)]);
+                vals.sort((a,b)=>a-b);
+                filtered[y*width+x] = vals[4];
+            }
         }
-        // 连通组件标记 (4邻域)
-        let labels = new Int32Array(width * height).fill(0);
-        let currentLabel = 1;
-        let equivalences = [];
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                let idx = y * width + x;
-                if (binary[idx] === 0) continue;
-                let up = (y > 0) ? labels[(y-1)*width + x] : 0;
-                let left = (x > 0) ? labels[y*width + (x-1)] : 0;
-                if (up === 0 && left === 0) {
-                    labels[idx] = currentLabel;
-                    equivalences.push([currentLabel, currentLabel]);
-                    currentLabel++;
-                } else if (up !== 0 && left === 0) labels[idx] = up;
-                else if (up === 0 && left !== 0) labels[idx] = left;
-                else {
-                    let minL = Math.min(up, left);
-                    labels[idx] = minL;
-                    if (up !== left) {
-                        equivalences.push([up, left]);
-                        equivalences.push([left, up]);
+        // 边缘填充
+        for(let y=0;y<height;y++) for(let x=0;x<width;x++) if(y===0||y===height-1||x===0||x===width-1) filtered[y*width+x]=gray[y*width+x];
+        return filtered;
+    }
+
+    function findNodulesRobust(imageData, width, height) {
+        let gray = preprocessGray(imageData, width, height);
+        // 自适应阈值: 全局均值的1.1倍 + 局部对比度
+        let sum=0; for(let v of gray) sum+=v;
+        let globalMean = sum/gray.length;
+        let threshold = globalMean * 1.15;  // 高于平均亮度15% (结节通常较亮)
+        let binary = new Uint8Array(width*height);
+        for(let i=0;i<gray.length;i++) binary[i] = gray[i] > threshold ? 1 : 0;
+
+        // 连通组件 (4邻域)
+        let labels = new Int32Array(width*height).fill(0);
+        let curLabel=1, eq=[];
+        for(let y=0;y<height;y++){
+            for(let x=0;x<width;x++){
+                let idx=y*width+x;
+                if(binary[idx]===0) continue;
+                let up=y>0?labels[(y-1)*width+x]:0;
+                let left=x>0?labels[y*width+(x-1)]:0;
+                if(up===0 && left===0) { labels[idx]=curLabel; eq.push([curLabel,curLabel]); curLabel++; }
+                else if(up!==0 && left===0) labels[idx]=up;
+                else if(up===0 && left!==0) labels[idx]=left;
+                else { let m=Math.min(up,left); labels[idx]=m; if(up!==left){ eq.push([up,left]); eq.push([left,up]); } }
+            }
+        }
+        // 并查集合并
+        let parent = new Array(curLabel).fill(0).map((_,i)=>i);
+        function find(x){ while(parent[x]!==x){ parent[x]=parent[parent[x]]; x=parent[x]; } return x; }
+        function union(a,b){ let ra=find(a),rb=find(b); if(ra!==rb) parent[rb]=ra; }
+        for(let [a,b] of eq) union(a,b);
+        for(let i=1;i<curLabel;i++) find(i);
+        let newMap=new Map(), finalLabel=new Int32Array(width*height), nextL=1;
+        for(let i=0;i<width*height;i++){
+            let l=labels[i];
+            if(l===0) continue;
+            let root=parent[l];
+            if(!newMap.has(root)) newMap.set(root, nextL++);
+            finalLabel[i]=newMap.get(root);
+        }
+
+        // 统计区域
+        let regions=new Map();
+        for(let i=0;i<width*height;i++){
+            let lab=finalLabel[i];
+            if(lab===0) continue;
+            if(!regions.has(lab)) regions.set(lab, {area:0, minX:width, minY:height, maxX:0, maxY:0, sumGray:0});
+            let reg=regions.get(lab);
+            reg.area++;
+            let x=i%width, y=Math.floor(i/width);
+            reg.minX=Math.min(reg.minX,x); reg.minY=Math.min(reg.minY,y);
+            reg.maxX=Math.max(reg.maxX,x); reg.maxY=Math.max(reg.maxY,y);
+            reg.sumGray += gray[i];
+        }
+
+        let nodules=[];
+        // 预估肺野区域: 图像中央60%区域 (排除边缘肋骨、文字)
+        let lungLeft = width*0.2, lungRight = width*0.8, lungTop = height*0.2, lungBottom = height*0.8;
+
+        for(let [lab, reg] of regions.entries()){
+            let area = reg.area;
+            if(area < 15 || area > 700) continue;   // 结节面积范围
+            let centerX = (reg.minX+reg.maxX)/2;
+            let centerY = (reg.minY+reg.maxY)/2;
+            // 排除太靠近边缘的假阳性 (文字、标尺、肋骨边缘)
+            if(centerX < lungLeft || centerX > lungRight || centerY < lungTop || centerY > lungBottom) continue;
+            
+            let w = reg.maxX-reg.minX+1, h = reg.maxY-reg.minY+1;
+            let diamPx = (w+h)/2;
+            let physSize = diamPx * 0.42; // mm模拟
+            // 圆形度 = 面积 / (π*(半径)^2)
+            let radius = diamPx/2;
+            let circularity = area / (Math.PI * radius * radius);
+            // 离心率 (长宽比接近1越好)
+            let aspect = Math.min(w,h)/Math.max(w,h);
+            // 平均灰度对比 (结节应该比周围亮)
+            let avgGray = reg.sumGray / area;
+            let localBg = 0;
+            let samp=0;
+            for(let dy=-5;dy<=5;dy+=2){
+                for(let dx=-5;dx<=5;dx+=2){
+                    let nx = Math.min(width-1, Math.max(0, centerX+dx));
+                    let ny = Math.min(height-1, Math.max(0, centerY+dy));
+                    if(Math.hypot(nx-centerX, ny-centerY) > radius+3){
+                        localBg += gray[ny*width+nx];
+                        samp++;
                     }
                 }
             }
-        }
-        // 合并等价标签
-        let labelMap = new Array(currentLabel).fill(0);
-        for (let i = 1; i < currentLabel; i++) labelMap[i] = i;
-        function find(x) {
-            if (labelMap[x] !== x) labelMap[x] = find(labelMap[x]);
-            return labelMap[x];
-        }
-        for (let eq of equivalences) {
-            let a = find(eq[0]), b = find(eq[1]);
-            if (a !== b) labelMap[b] = a;
-        }
-        for (let i = 1; i < currentLabel; i++) find(i);
-        // 重新分配label
-        let finalLabels = new Int32Array(width * height);
-        let labelCounter = 1;
-        let newMap = new Map();
-        for (let i = 0; i < width*height; i++) {
-            let l = labels[i];
-            if (l === 0) continue;
-            let root = labelMap[l];
-            if (!newMap.has(root)) newMap.set(root, labelCounter++);
-            finalLabels[i] = newMap.get(root);
-        }
-        // 统计各个连通区域属性: 面积, bounding box, 圆形度
-        let regions = new Map();
-        for (let i = 0; i < width*height; i++) {
-            let label = finalLabels[i];
-            if (label === 0) continue;
-            if (!regions.has(label)) {
-                regions.set(label, { area: 0, minX: width, minY: height, maxX: 0, maxY: 0, pixels: [] });
-            }
-            let reg = regions.get(label);
-            reg.area++;
-            let x = i % width;
-            let y = Math.floor(i / width);
-            reg.minX = Math.min(reg.minX, x);
-            reg.minY = Math.min(reg.minY, y);
-            reg.maxX = Math.max(reg.maxX, x);
-            reg.maxY = Math.max(reg.maxY, y);
-            reg.pixels.push([x,y]);
-        }
-        // 筛选结节: 面积在合理范围 (15~800px), 圆形度(面积/外接圆面积) > 0.55 或 紧凑型
-        let nodules = [];
-        for (let [label, reg] of regions.entries()) {
-            let area = reg.area;
-            if (area < 12 || area > 1500) continue;
-            let widthBox = reg.maxX - reg.minX + 1;
-            let heightBox = reg.maxY - reg.minY + 1;
-            let diameter = Math.max(widthBox, heightBox);
-            let radius = diameter / 2;
-            let circumArea = Math.PI * radius * radius;
-            let circularity = area / circumArea;
-            // 圆形度 + 紧凑度
-            let aspectRatio = Math.min(widthBox, heightBox) / Math.max(widthBox, heightBox);
-            if (circularity > 0.48 && aspectRatio > 0.45 && area > 8) {
-                let centerX = (reg.minX + reg.maxX) / 2;
-                let centerY = (reg.minY + reg.maxY) / 2;
-                let sizeEstimate = (widthBox + heightBox) / 2;
-                let physicalSizeMm = sizeEstimate * 0.45; // 假设每像素0.45mm, 模拟真实尺寸
+            let bgMean = samp>0 ? localBg/samp : globalMean;
+            let contrast = avgGray / (bgMean+0.1);
+            // 严格筛选: 圆形度>0.52, 长宽比>0.55, 对比度>1.15, 面积适中
+            if(circularity > 0.52 && aspect > 0.55 && contrast > 1.12 && area>=15){
                 nodules.push({
-                    x: centerX, y: centerY, radius: sizeEstimate/2,
-                    area: area, diameterMm: physicalSizeMm,
-                    widthBox, heightBox
+                    x: centerX, y: centerY, radius: radius,
+                    area: area, diameterMm: physSize,
+                    circularity: circularity, contrast: contrast
                 });
             }
         }
-        // 合并过于接近的结节 (非极大值抑制简易)
-        let filtered = [];
-        nodules.sort((a,b)=>b.area - a.area);
-        for (let n of nodules) {
-            let overlap = false;
-            for (let exist of filtered) {
-                let dx = exist.x - n.x, dy = exist.y - n.y;
-                let dist = Math.hypot(dx, dy);
-                if (dist < (exist.radius + n.radius) * 0.7) { overlap = true; break; }
+        // 非极大值抑制合并过近区域
+        nodules.sort((a,b)=>b.area-a.area);
+        let filtered=[];
+        for(let n of nodules){
+            let overlap=false;
+            for(let ex of filtered){
+                let dist = Math.hypot(ex.x-n.x, ex.y-n.y);
+                if(dist < (ex.radius+n.radius)*0.6) { overlap=true; break; }
             }
-            if (!overlap) filtered.push(n);
+            if(!overlap) filtered.push(n);
         }
         return filtered;
     }
 
-    // 执行分析并绘制结节标记
     async function performAnalysis() {
-        if (!currentImage) {
-            alert(currentLang === 'zh' ? '请先上传肺部医学影像' : '폐 의료 영상을 먼저 업로드하세요.');
+        if(!currentImage){
+            alert(currentLang==='zh'?'먼저 이미지를 업로드하세요 | 请先上传影像':'Please upload image');
             return;
         }
-        // 获取canvas当前图像数据进行处理
-        const width = canvas.width;
-        const height = canvas.height;
-        let imageData = currentCtx.getImageData(0, 0, width, height);
-        let nodules = findNoduleCandidates(imageData, width, height);
-        // 计算风险分数: 基于结节数量，最大尺寸以及圆形度不规则度 (模拟更真实)
+        const w = canvas.width, h = canvas.height;
+        let imgData = ctx.getImageData(0,0,w,h);
+        let nodules = findNodulesRobust(imgData, w, h);
+        let maxDia = nodules.length>0 ? Math.max(...nodules.map(n=>n.diameterMm)) : 0;
         let riskScore = 0;
-        let maxDiameter = 0;
-        if (nodules.length > 0) {
-            maxDiameter = Math.max(...nodules.map(n => n.diameterMm));
-            let sizeFactor = Math.min(1.0, maxDiameter / 18.0);   // 18mm以上高风险
-            let countFactor = Math.min(1.0, nodules.length / 3.0);
-            let irregularity = 0;
-            for (let n of nodules) {
-                let ir = 1 - (n.area / (Math.PI * (n.radius * n.radius)));
-                irregularity += Math.abs(ir);
-            }
-            irregularity = irregularity / nodules.length;
-            riskScore = 0.35 * sizeFactor + 0.35 * countFactor + 0.3 * Math.min(1, irregularity*1.2);
-            riskScore = Math.min(0.98, riskScore);
-        } else {
-            riskScore = 0.05;
-        }
-        // 绘制标记
+        if(nodules.length>0){
+            let sizeFactor = Math.min(1.0, maxDia/16.0);
+            let countFactor = Math.min(1.0, nodules.length/2.5);
+            let circFactor = 0;
+            for(let n of nodules) circFactor += (1 - n.circularity);
+            circFactor = circFactor/nodules.length;
+            riskScore = 0.45*sizeFactor + 0.35*countFactor + 0.2*Math.min(1, circFactor*1.5);
+            riskScore = Math.min(0.96, riskScore);
+        } else { riskScore = 0.02; }
+        analysisData = { nodules, riskScore, maxDiameter: maxDia };
         drawNodulesOnCanvas(nodules);
-        // 保存结果
-        currentAnalysisResult = { nodules, riskScore, maxDiameter };
-        // 更新UI数值
-        document.getElementById('noduleCountValue').innerText = nodules.length;
-        document.getElementById('maxSizeValue').innerText = maxDiameter > 0 ? maxDiameter.toFixed(1) + ' mm' : '—';
-        let riskText = '';
-        if (riskScore < 0.35) riskText = translations[currentLang].risk_low;
-        else if (riskScore < 0.65) riskText = translations[currentLang].risk_mid;
-        else riskText = translations[currentLang].risk_high;
-        document.getElementById('riskLevelValue').innerText = riskText;
-        updateRiskUI(riskScore, maxDiameter);
+        updateMetricsUI();
+        updateRiskGauge(riskScore);
         renderNoduleList(nodules);
+        updateSizeChart(nodules);
+        renderReportText(riskScore, maxDia, nodules.length);
     }
 
     function drawNodulesOnCanvas(nodules) {
-        if (!currentImage) return;
-        // 重绘原始图像
-        currentCtx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-        for (let nod of nodules) {
-            // 绘制圆圈标记
-            currentCtx.beginPath();
-            currentCtx.arc(nod.x, nod.y, nod.radius, 0, 2 * Math.PI);
-            currentCtx.strokeStyle = '#ff3b3f';
-            currentCtx.lineWidth = 2.5;
-            currentCtx.stroke();
-            currentCtx.beginPath();
-            currentCtx.arc(nod.x, nod.y, nod.radius-1, 0, 2 * Math.PI);
-            currentCtx.strokeStyle = '#ffd966';
-            currentCtx.lineWidth = 1.5;
-            currentCtx.stroke();
-            // 标记尺寸文字
-            currentCtx.font = "bold 14px 'Inter'";
-            currentCtx.fillStyle = '#ffefc0';
-            currentCtx.shadowBlur = 4;
-            currentCtx.fillText(`${nod.diameterMm.toFixed(1)}mm`, nod.x+5, nod.y-5);
-            currentCtx.shadowBlur = 0;
+        if(!currentImage) return;
+        ctx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
+        for(let nod of nodules){
+            ctx.beginPath();
+            ctx.arc(nod.x, nod.y, nod.radius+2, 0, 2*Math.PI);
+            ctx.strokeStyle = '#e63946';
+            ctx.lineWidth = 2.8;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.arc(nod.x, nod.y, nod.radius-0.5, 0, 2*Math.PI);
+            ctx.strokeStyle = '#ffbc6e';
+            ctx.lineWidth = 1.8;
+            ctx.stroke();
+            ctx.font = "bold 13px 'Inter'";
+            ctx.fillStyle = '#fff1cf';
+            ctx.shadowBlur=3;
+            ctx.fillText(`${nod.diameterMm.toFixed(1)}mm`, nod.x+5, nod.y-5);
+            ctx.shadowBlur=0;
         }
     }
 
     function renderNoduleList(nodules) {
         const container = document.getElementById('noduleListPanel');
-        if (!nodules.length) {
-            container.innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-            return;
-        }
-        let html = '';
-        nodules.forEach((nod, idx) => {
-            let sizeText = nod.diameterMm.toFixed(1) + ' mm';
-            html += `<div class="nodule-item">
-                        <span><strong>${translations[currentLang].nodule_item_prefix}${idx+1}</strong> (${sizeText})</span>
-                        <span><i class="fas fa-circle" style="color:#e67e22; font-size:12px;"></i> ${translations[currentLang].noduleSize}: ${nod.diameterMm.toFixed(1)} mm</span>
-                     </div>`;
+        if(!nodules.length) { container.innerHTML = `<div style="color:#65807b;">${trans[currentLang].noDataMsg}</div>`; return; }
+        let html='';
+        nodules.forEach((n,i)=>{
+            html+=`<div class="nodule-item"><span>${trans[currentLang].nodule_prefix} ${i+1}</span><span>${n.diameterMm.toFixed(1)} mm</span></div>`;
         });
         container.innerHTML = html;
     }
 
-    function updateRiskUI(riskScore, maxDiameter) {
-        const badgeDiv = document.getElementById('riskBadge');
-        let riskClass = '';
-        let riskLabel = '';
-        if (riskScore < 0.35) { riskClass = 'risk-low'; riskLabel = translations[currentLang].risk_low; }
-        else if (riskScore < 0.65) { riskClass = 'risk-mid'; riskLabel = translations[currentLang].risk_mid; }
-        else { riskClass = 'risk-high'; riskLabel = translations[currentLang].risk_high; }
-        badgeDiv.innerHTML = `<span class="risk-badge ${riskClass}"><i class="fas fa-chart-simple"></i> ${riskLabel} (${(riskScore*100).toFixed(0)}%)</span>`;
-        if (maxDiameter > 12) {
-            badgeDiv.innerHTML += `<div style="margin-top:8px; font-size:12px;"><i class="fas fa-clock"></i> ${currentLang === 'zh' ? '建议临床随访或进一步检查' : '임상 추적 또는 추가 검사 권장'}</div>`;
-        }
+    function clearAll() {
+        if(currentImage) ctx.drawImage(currentImage,0,0,canvas.width,canvas.height);
+        else { ctx.fillStyle="#d9e2df"; ctx.fillRect(0,0,canvas.width,canvas.height); }
+        analysisData = { nodules:[], riskScore:0, maxDiameter:0 };
+        updateMetricsUI();
+        document.getElementById('noduleListPanel').innerHTML = `<div style="color:#65807b;">${trans[currentLang].noDataMsg}</div>`;
+        document.getElementById('dynamicReport').innerHTML = `<i class="fas fa-info-circle"></i> ${trans[currentLang].reportPlaceholder}`;
+        if(sizeChartInstance) { sizeChartInstance.destroy(); sizeChartInstance=null; }
+        if(riskChartInstance) riskChartInstance.destroy();
+        const riskC=document.getElementById('riskChart');
+        if(riskC){ let rctx=riskC.getContext('2d'); rctx.clearRect(0,0,riskC.width,riskC.height); rctx.fillStyle='#ccc'; rctx.fillText('—', riskC.width/2, riskC.height/2); }
     }
 
-    function clearCanvas() {
-        if (currentImage) {
-            currentCtx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-        } else {
-            currentCtx.clearRect(0, 0, canvas.width, canvas.height);
-            currentCtx.fillStyle = "#eef2f0";
-            currentCtx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        currentAnalysisResult = { nodules: [], riskScore: 0, maxDiameter: 0 };
-        document.getElementById('noduleCountValue').innerText = '—';
-        document.getElementById('maxSizeValue').innerText = '—';
-        document.getElementById('riskLevelValue').innerText = '—';
-        document.getElementById('riskBadge').innerHTML = '';
-        document.getElementById('noduleListPanel').innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-    }
-
-    // 事件监听
-    uploadArea.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) handleImageUpload(e.target.files[0]);
-    });
-    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#2c8f8c'; });
-    uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#8bb5b3'; });
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#8bb5b3';
-        if (e.dataTransfer.files.length) handleImageUpload(e.dataTransfer.files[0]);
-    });
-    analyzeBtn.addEventListener('click', performAnalysis);
-    clearBtn.addEventListener('click', () => clearCanvas());
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
-    });
-    // 默认初始绘制占位
-    setLanguage('zh');
-    currentCtx.fillStyle = "#eef2f0";
-    currentCtx.fillRect(0, 0, canvas.width, canvas.height);
-    currentCtx.fillStyle = "#688b8a";
-    currentCtx.font = "14px Inter";
-    currentCtx.fillText("영상 대기 | 等待影像", 30, 60);
-</script>
-</body>
-</html><!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>肺癌医学影像分析系统 | 폐암 의료 영상 분석 시스템</title>
-    <!-- 使用现代字体和图标库 -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #e9f0f5 0%, #d9e2ec 100%);
-            min-height: 100vh;
-            padding: 20px;
-            color: #1e2a3e;
-        }
-
-        /* 主容器 */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            background: rgba(255,255,255,0.85);
-            backdrop-filter: blur(2px);
-            border-radius: 40px;
-            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
-            overflow: hidden;
-            padding: 24px 28px;
-            transition: all 0.3s ease;
-        }
-
-        /* 头部 */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 28px;
-            padding-bottom: 16px;
-            border-bottom: 2px solid rgba(60, 110, 113, 0.2);
-        }
-
-        .title-section h1 {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(120deg, #1f5e5f, #2c8f8c);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
-            letter-spacing: -0.3px;
-        }
-
-        .title-section p {
-            font-size: 0.85rem;
-            color: #4a627a;
-            margin-top: 6px;
-        }
-
-        .lang-switch {
-            display: flex;
-            gap: 12px;
-            background: #ffffffcc;
-            padding: 8px 16px;
-            border-radius: 60px;
-            backdrop-filter: blur(4px);
-        }
-
-        .lang-btn {
-            background: none;
-            border: none;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            padding: 6px 18px;
-            border-radius: 40px;
-            transition: all 0.2s;
-            color: #2c5f6e;
-        }
-
-        .lang-btn.active {
-            background: #1f6e6b;
-            color: white;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-        }
-
-        /* 两列布局 */
-        .dashboard {
-            display: flex;
-            gap: 28px;
-            flex-wrap: wrap;
-        }
-
-        .image-panel {
-            flex: 1.2;
-            min-width: 280px;
-            background: #ffffffcc;
-            border-radius: 32px;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-
-        .analysis-panel {
-            flex: 0.9;
-            min-width: 280px;
-            background: #ffffffcc;
-            border-radius: 32px;
-            padding: 20px;
-            backdrop-filter: blur(4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
-        }
-
-        .upload-area {
-            border: 2px dashed #8bb5b3;
-            border-radius: 28px;
-            padding: 28px 16px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.25s;
-            background: #f8fafd;
-            margin-bottom: 20px;
-        }
-
-        .upload-area:hover {
-            border-color: #2c8f8c;
-            background: #eef3f2;
-        }
-
-        .upload-area i {
-            font-size: 48px;
-            color: #468b8a;
-            margin-bottom: 10px;
-        }
-
-        .image-preview {
-            background: #1e2a2e10;
-            border-radius: 24px;
-            text-align: center;
-            min-height: 380px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-        }
-
-        canvas {
-            max-width: 100%;
-            border-radius: 24px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            background: #00000010;
-        }
-
-        .btn-group {
-            margin-top: 20px;
-            display: flex;
-            gap: 14px;
-            flex-wrap: wrap;
-        }
-
-        .btn {
-            background: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 48px;
-            font-weight: 600;
-            font-size: 0.9rem;
-            cursor: pointer;
-            transition: 0.2s;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .btn-primary {
-            background: #236e6b;
-            color: white;
-            box-shadow: 0 6px 14px rgba(35,110,107,0.3);
-        }
-
-        .btn-primary:hover {
-            background: #1b5755;
-            transform: translateY(-2px);
-        }
-
-        .btn-outline {
-            border: 1px solid #7f9e9b;
-            background: transparent;
-        }
-
-        .result-card {
-            background: #f2f6f9;
-            border-radius: 24px;
-            padding: 20px;
-            margin-top: 20px;
-        }
-
-        .metric {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 18px;
-            border-bottom: 1px solid #cddfe4;
-            padding-bottom: 8px;
-        }
-
-        .risk-badge {
-            display: inline-block;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-weight: 700;
-            margin-top: 8px;
-        }
-
-        .risk-high {
-            background: #d9534f;
-            color: white;
-        }
-        .risk-mid {
-            background: #f0ad4e;
-            color: white;
-        }
-        .risk-low {
-            background: #5cb85c;
-            color: white;
-        }
-
-        .nodule-list {
-            max-height: 220px;
-            overflow-y: auto;
-            font-size: 0.85rem;
-        }
-
-        .nodule-item {
-            background: white;
-            border-radius: 18px;
-            padding: 10px;
-            margin-bottom: 8px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        footer {
-            margin-top: 32px;
-            text-align: center;
-            font-size: 0.75rem;
-            color: #5b7c7a;
-            border-top: 1px solid rgba(0,0,0,0.05);
-            padding-top: 20px;
-        }
-
-        @media (max-width: 800px) {
-            .container { padding: 16px; }
-            .btn { padding: 8px 16px; }
-        }
-    </style>
-</head>
-<body>
-<div class="container">
-    <div class="header">
-        <div class="title-section">
-            <h1><i class="fas fa-lungs"></i> LungVision AI | 폐암 분석 시스템</h1>
-            <p data-key="subtitle">의료 영상 기반 폐 결절 탐지 및 위험도 평가 | 基于深度学习的肺结节智能分析</p>
-        </div>
-        <div class="lang-switch">
-            <button class="lang-btn active" data-lang="zh">🇨🇳 中文</button>
-            <button class="lang-btn" data-lang="ko">🇰🇷 한국어</button>
-        </div>
-    </div>
-
-    <div class="dashboard">
-        <!-- 影像区域 -->
-        <div class="image-panel">
-            <div class="upload-area" id="uploadArea">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <p data-key="dragText">클릭 또는 드래그하여 CT/엑스레이 업로드 | 点击或拖拽上传肺部影像 (CT/X光)</p>
-                <input type="file" id="fileInput" accept="image/jpeg,image/png,image/jpg,image/bmp" style="display: none;">
-                <small style="display: block; margin-top: 8px;" data-key="formatHint">지원: JPG, PNG (권장 CT 또는 흉부 영상) | 支持JPG/PNG格式</small>
-            </div>
-            <div class="image-preview">
-                <canvas id="imageCanvas" width="500" height="400" style="width:100%; height:auto; background:#eef2f0;"></canvas>
-                <div class="btn-group">
-                    <button class="btn btn-primary" id="analyzeBtn"><i class="fas fa-microscope"></i> <span data-key="analyzeBtn">분석 시작 | 开始分析</span></button>
-                    <button class="btn btn-outline" id="clearBtn"><i class="fas fa-trash-alt"></i> <span data-key="clearBtn">초기화 | 清除图像</span></button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 分析结果区域 -->
-        <div class="analysis-panel">
-            <h3><i class="fas fa-chart-line"></i> <span data-key="resultTitle">진단 리포트 | 诊断报告</span></h3>
-            <div class="result-card">
-                <div class="metric">
-                    <span><i class="fas fa-microscope"></i> <span data-key="noduleCount">발견된 결절 | 结节数量</span></span>
-                    <span id="noduleCountValue">—</span>
-                </div>
-                <div class="metric">
-                    <span><i class="fas fa-arrows-alt"></i> <span data-key="maxSize">최대 결절 크기 | 最大结节直径</span></span>
-                    <span id="maxSizeValue">—</span>
-                </div>
-                <div class="metric">
-                    <span><i class="fas fa-exclamation-triangle"></i> <span data-key="riskLevel">위험도 평가 | 风险评估</span></span>
-                    <span id="riskLevelValue">—</span>
-                </div>
-                <div id="riskBadge" style="margin: 5px 0 10px 0;"></div>
-                <div style="margin-top: 10px;">
-                    <div><strong><i class="fas fa-list-ul"></i> <span data-key="noduleDetails">결절 상세 | 结节详情</span></strong></div>
-                    <div id="noduleListPanel" class="nodule-list">
-                        <div style="text-align:center; color:#7c8f8c;"><span data-key="noDataMsg">분석 결과가 여기에 표시됩니다 | 分析后显示结节信息</span></div>
-                    </div>
-                </div>
-                <div style="margin-top: 12px; font-size:0.75rem; background:#eaf2f0; border-radius:20px; padding:8px;">
-                    <i class="fas fa-info-circle"></i> <span data-key="disclaimer">* 영상 처리 기반 시뮬레이션 분석 (실제 임상 진단은 전문의와 상담하세요) | *基于图像处理模拟分析，实际诊断请咨询专业医师</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    <footer>
-        <span data-key="footer">LungVision AI | 혁신적인 폐암 스크리닝 지원 | 肺癌智能辅助筛查系统 (데모 버전 / 演示版)</span>
-    </footer>
-</div>
-
-<script>
-    // ---------- 双语字典 (中-韩) ----------
-    const translations = {
-        zh: {
-            subtitle: "의료 영상 기반 폐 결절 탐지 및 위험도 평가 | 基于深度学习的肺结节智能分析",
-            dragText: "클릭 또는 드래그하여 CT/엑스레이 업로드 | 点击或拖拽上传肺部影像 (CT/X光)",
-            formatHint: "지원: JPG, PNG (권장 CT 또는 흉부 영상) | 支持JPG/PNG格式",
-            analyzeBtn: "분석 시작 | 开始分析",
-            clearBtn: "초기화 | 清除图像",
-            resultTitle: "진단 리포트 | 诊断报告",
-            noduleCount: "발견된 결절 | 结节数量",
-            maxSize: "최대 결절 크기 | 最大结节直径",
-            riskLevel: "위험도 평가 | 风险评估",
-            noduleDetails: "결절 상세 | 结节详情",
-            noDataMsg: "분석 결과가 여기에 표시됩니다 | 分析后显示结节信息",
-            disclaimer: "* 영상 처리 기반 시뮬레이션 분석 (실제 임상 진단은 전문의와 상담하세요) | *基于图像处理模拟分析，实际诊断请咨询专业医师",
-            footer: "LungVision AI | 혁신적인 폐암 스크리닝 지원 | 肺癌智能辅助筛查系统 (데모 버전 / 演示版)",
-            risk_low: "낮음 | 低风险",
-            risk_mid: "중간 | 中风险",
-            risk_high: "높음 | 高风险",
-            nodule_item_prefix: "결절 #",
-            size_mm: "mm",
-            noduleSize: "크기"
-        },
-        ko: {
-            subtitle: "의료 영상 기반 폐 결절 탐지 및 위험도 평가",
-            dragText: "클릭 또는 드래그하여 CT/엑스레이 업로드",
-            formatHint: "지원: JPG, PNG (권장 CT 또는 흉부 영상)",
-            analyzeBtn: "분석 시작",
-            clearBtn: "초기화",
-            resultTitle: "진단 리포트",
-            noduleCount: "발견된 결절",
-            maxSize: "최대 결절 크기",
-            riskLevel: "위험도 평가",
-            noduleDetails: "결절 상세",
-            noDataMsg: "분석 결과가 여기에 표시됩니다",
-            disclaimer: "* 영상 처리 기반 시뮬레이션 분석 (실제 임상 진단은 전문의와 상담하세요)",
-            footer: "LungVision AI | 혁신적인 폐암 스크리닝 지원 (데모 버전)",
-            risk_low: "낮음",
-            risk_mid: "중간",
-            risk_high: "높음",
-            nodule_item_prefix: "결절 #",
-            size_mm: "mm",
-            noduleSize: "크기"
-        }
-    };
-
-    let currentLang = 'zh';
-    let currentImage = null;       // 存储原图Image对象
-    let currentCanvas = null;      // canvas元素
-    let currentCtx = null;
-    let currentAnalysisResult = { nodules: [], riskScore: 0, maxDiameter: 0 };
-
-    // DOM 元素
-    const canvas = document.getElementById('imageCanvas');
-    const ctx = canvas.getContext('2d');
-    const fileInput = document.getElementById('fileInput');
-    const uploadArea = document.getElementById('uploadArea');
-    const analyzeBtn = document.getElementById('analyzeBtn');
-    const clearBtn = document.getElementById('clearBtn');
-
-    currentCanvas = canvas;
-    currentCtx = ctx;
-
-    // 语言切换逻辑
-    function updateLanguage() {
-        document.querySelectorAll('[data-key]').forEach(el => {
-            const key = el.getAttribute('data-key');
-            if (translations[currentLang][key]) {
-                if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
-                    el.placeholder = translations[currentLang][key];
-                } else {
-                    el.innerText = translations[currentLang][key];
-                }
-            }
-        });
-        // 更新动态的内容（结节详情面板/风险标签）
-        if (currentAnalysisResult && currentAnalysisResult.nodules.length > 0) {
-            renderNoduleList(currentAnalysisResult.nodules);
-            updateRiskUI(currentAnalysisResult.riskScore, currentAnalysisResult.maxDiameter);
-        } else {
-            // 如果没有分析结果，显示占位符
-            if (currentAnalysisResult.nodules.length === 0) {
-                const placeholderDiv = document.getElementById('noduleListPanel');
-                if (placeholderDiv) placeholderDiv.innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-            }
-        }
-        // 更新统计数字（如果存在结果）
-        if (currentAnalysisResult.nodules.length) {
-            document.getElementById('noduleCountValue').innerText = currentAnalysisResult.nodules.length;
-            document.getElementById('maxSizeValue').innerText = currentAnalysisResult.maxDiameter > 0 ? currentAnalysisResult.maxDiameter.toFixed(1) + ' mm' : '—';
-            let riskText = '';
-            if (currentAnalysisResult.riskScore < 0.35) riskText = translations[currentLang].risk_low;
-            else if (currentAnalysisResult.riskScore < 0.65) riskText = translations[currentLang].risk_mid;
-            else riskText = translations[currentLang].risk_high;
-            document.getElementById('riskLevelValue').innerText = riskText;
-        } else {
-            if(!currentAnalysisResult.nodules.length) {
-                document.getElementById('noduleCountValue').innerText = '—';
-                document.getElementById('maxSizeValue').innerText = '—';
-                document.getElementById('riskLevelValue').innerText = '—';
-                document.getElementById('riskBadge').innerHTML = '';
-            }
-        }
-    }
-
-    function setLanguage(lang) {
-        currentLang = lang;
-        updateLanguage();
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            if (btn.getAttribute('data-lang') === lang) btn.classList.add('active');
-            else btn.classList.remove('active');
-        });
-    }
-
-    // 上传图片逻辑
-    function handleImageUpload(file) {
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-                currentImage = img;
-                // 设置canvas尺寸适应图片比例 (最大宽度500px)
-                const maxWidth = 500;
-                let width = img.width;
-                let height = img.height;
-                if (width > maxWidth) {
-                    height = height * (maxWidth / width);
-                    width = maxWidth;
-                }
-                canvas.width = width;
-                canvas.height = height;
-                currentCtx.drawImage(img, 0, 0, width, height);
-                // 重置分析结果
-                currentAnalysisResult = { nodules: [], riskScore: 0, maxDiameter: 0 };
-                document.getElementById('noduleCountValue').innerText = '—';
-                document.getElementById('maxSizeValue').innerText = '—';
-                document.getElementById('riskLevelValue').innerText = '—';
-                document.getElementById('riskBadge').innerHTML = '';
-                document.getElementById('noduleListPanel').innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
+    function handleImage(file){
+        if(!file) return;
+        let reader = new FileReader();
+        reader.onload=(e)=>{
+            let img=new Image();
+            img.onload=()=>{
+                currentImage=img;
+                let maxW=500;
+                let w=img.width, h=img.height;
+                if(w>maxW){ h = h*(maxW/w); w=maxW; }
+                canvas.width=w; canvas.height=h;
+                ctx.drawImage(img,0,0,w,h);
+                analysisData={ nodules:[], riskScore:0, maxDiameter:0 };
+                updateMetricsUI();
+                document.getElementById('noduleListPanel').innerHTML = `<div>${trans[currentLang].noDataMsg}</div>`;
+                document.getElementById('dynamicReport').innerHTML = `<i class="fas fa-info-circle"></i> ${trans[currentLang].reportPlaceholder}`;
+                if(sizeChartInstance) sizeChartInstance.destroy();
+                if(riskChartInstance) riskChartInstance.destroy();
+                sizeChartInstance=null; riskChartInstance=null;
             };
-            img.src = e.target.result;
+            img.src=e.target.result;
         };
         reader.readAsDataURL(file);
     }
 
-    // ------------- 高级图像分析: 肺结节候选检测 (连通区域+圆形度+灰度阈值) -------------
-    // 预处理: 转为灰度, 自适应阈值寻找亮区域 (结节通常较高密度)
-    function findNoduleCandidates(imageData, width, height) {
-        // 灰度数组
-        let gray = new Uint8ClampedArray(width * height);
-        for (let i = 0; i < imageData.data.length; i += 4) {
-            let r = imageData.data[i];
-            let g = imageData.data[i+1];
-            let b = imageData.data[i+2];
-            let gr = 0.299 * r + 0.587 * g + 0.114 * b;
-            gray[i/4] = gr;
-        }
-        // 使用大津法 (Otsu) 二值化，但更稳健: 采用均值+标准差提取高亮区域
-        let sum = 0;
-        for (let i = 0; i < gray.length; i++) sum += gray[i];
-        let mean = sum / gray.length;
-        let variance = 0;
-        for (let i = 0; i < gray.length; i++) variance += (gray[i] - mean) ** 2;
-        let std = Math.sqrt(variance / gray.length);
-        let threshold = mean + std * 0.6;  // 高亮区域通常代表结节或致密组织
-        // 二值化
-        let binary = new Uint8Array(width * height);
-        for (let i = 0; i < gray.length; i++) {
-            binary[i] = (gray[i] > threshold) ? 1 : 0;
-        }
-        // 连通组件标记 (4邻域)
-        let labels = new Int32Array(width * height).fill(0);
-        let currentLabel = 1;
-        let equivalences = [];
-        for (let y = 0; y < height; y++) {
-            for (let x = 0; x < width; x++) {
-                let idx = y * width + x;
-                if (binary[idx] === 0) continue;
-                let up = (y > 0) ? labels[(y-1)*width + x] : 0;
-                let left = (x > 0) ? labels[y*width + (x-1)] : 0;
-                if (up === 0 && left === 0) {
-                    labels[idx] = currentLabel;
-                    equivalences.push([currentLabel, currentLabel]);
-                    currentLabel++;
-                } else if (up !== 0 && left === 0) labels[idx] = up;
-                else if (up === 0 && left !== 0) labels[idx] = left;
-                else {
-                    let minL = Math.min(up, left);
-                    labels[idx] = minL;
-                    if (up !== left) {
-                        equivalences.push([up, left]);
-                        equivalences.push([left, up]);
-                    }
-                }
-            }
-        }
-        // 合并等价标签
-        let labelMap = new Array(currentLabel).fill(0);
-        for (let i = 1; i < currentLabel; i++) labelMap[i] = i;
-        function find(x) {
-            if (labelMap[x] !== x) labelMap[x] = find(labelMap[x]);
-            return labelMap[x];
-        }
-        for (let eq of equivalences) {
-            let a = find(eq[0]), b = find(eq[1]);
-            if (a !== b) labelMap[b] = a;
-        }
-        for (let i = 1; i < currentLabel; i++) find(i);
-        // 重新分配label
-        let finalLabels = new Int32Array(width * height);
-        let labelCounter = 1;
-        let newMap = new Map();
-        for (let i = 0; i < width*height; i++) {
-            let l = labels[i];
-            if (l === 0) continue;
-            let root = labelMap[l];
-            if (!newMap.has(root)) newMap.set(root, labelCounter++);
-            finalLabels[i] = newMap.get(root);
-        }
-        // 统计各个连通区域属性: 面积, bounding box, 圆形度
-        let regions = new Map();
-        for (let i = 0; i < width*height; i++) {
-            let label = finalLabels[i];
-            if (label === 0) continue;
-            if (!regions.has(label)) {
-                regions.set(label, { area: 0, minX: width, minY: height, maxX: 0, maxY: 0, pixels: [] });
-            }
-            let reg = regions.get(label);
-            reg.area++;
-            let x = i % width;
-            let y = Math.floor(i / width);
-            reg.minX = Math.min(reg.minX, x);
-            reg.minY = Math.min(reg.minY, y);
-            reg.maxX = Math.max(reg.maxX, x);
-            reg.maxY = Math.max(reg.maxY, y);
-            reg.pixels.push([x,y]);
-        }
-        // 筛选结节: 面积在合理范围 (15~800px), 圆形度(面积/外接圆面积) > 0.55 或 紧凑型
-        let nodules = [];
-        for (let [label, reg] of regions.entries()) {
-            let area = reg.area;
-            if (area < 12 || area > 1500) continue;
-            let widthBox = reg.maxX - reg.minX + 1;
-            let heightBox = reg.maxY - reg.minY + 1;
-            let diameter = Math.max(widthBox, heightBox);
-            let radius = diameter / 2;
-            let circumArea = Math.PI * radius * radius;
-            let circularity = area / circumArea;
-            // 圆形度 + 紧凑度
-            let aspectRatio = Math.min(widthBox, heightBox) / Math.max(widthBox, heightBox);
-            if (circularity > 0.48 && aspectRatio > 0.45 && area > 8) {
-                let centerX = (reg.minX + reg.maxX) / 2;
-                let centerY = (reg.minY + reg.maxY) / 2;
-                let sizeEstimate = (widthBox + heightBox) / 2;
-                let physicalSizeMm = sizeEstimate * 0.45; // 假设每像素0.45mm, 模拟真实尺寸
-                nodules.push({
-                    x: centerX, y: centerY, radius: sizeEstimate/2,
-                    area: area, diameterMm: physicalSizeMm,
-                    widthBox, heightBox
-                });
-            }
-        }
-        // 合并过于接近的结节 (非极大值抑制简易)
-        let filtered = [];
-        nodules.sort((a,b)=>b.area - a.area);
-        for (let n of nodules) {
-            let overlap = false;
-            for (let exist of filtered) {
-                let dx = exist.x - n.x, dy = exist.y - n.y;
-                let dist = Math.hypot(dx, dy);
-                if (dist < (exist.radius + n.radius) * 0.7) { overlap = true; break; }
-            }
-            if (!overlap) filtered.push(n);
-        }
-        return filtered;
-    }
-
-    // 执行分析并绘制结节标记
-    async function performAnalysis() {
-        if (!currentImage) {
-            alert(currentLang === 'zh' ? '请先上传肺部医学影像' : '폐 의료 영상을 먼저 업로드하세요.');
-            return;
-        }
-        // 获取canvas当前图像数据进行处理
-        const width = canvas.width;
-        const height = canvas.height;
-        let imageData = currentCtx.getImageData(0, 0, width, height);
-        let nodules = findNoduleCandidates(imageData, width, height);
-        // 计算风险分数: 基于结节数量，最大尺寸以及圆形度不规则度 (模拟更真实)
-        let riskScore = 0;
-        let maxDiameter = 0;
-        if (nodules.length > 0) {
-            maxDiameter = Math.max(...nodules.map(n => n.diameterMm));
-            let sizeFactor = Math.min(1.0, maxDiameter / 18.0);   // 18mm以上高风险
-            let countFactor = Math.min(1.0, nodules.length / 3.0);
-            let irregularity = 0;
-            for (let n of nodules) {
-                let ir = 1 - (n.area / (Math.PI * (n.radius * n.radius)));
-                irregularity += Math.abs(ir);
-            }
-            irregularity = irregularity / nodules.length;
-            riskScore = 0.35 * sizeFactor + 0.35 * countFactor + 0.3 * Math.min(1, irregularity*1.2);
-            riskScore = Math.min(0.98, riskScore);
-        } else {
-            riskScore = 0.05;
-        }
-        // 绘制标记
-        drawNodulesOnCanvas(nodules);
-        // 保存结果
-        currentAnalysisResult = { nodules, riskScore, maxDiameter };
-        // 更新UI数值
-        document.getElementById('noduleCountValue').innerText = nodules.length;
-        document.getElementById('maxSizeValue').innerText = maxDiameter > 0 ? maxDiameter.toFixed(1) + ' mm' : '—';
-        let riskText = '';
-        if (riskScore < 0.35) riskText = translations[currentLang].risk_low;
-        else if (riskScore < 0.65) riskText = translations[currentLang].risk_mid;
-        else riskText = translations[currentLang].risk_high;
-        document.getElementById('riskLevelValue').innerText = riskText;
-        updateRiskUI(riskScore, maxDiameter);
-        renderNoduleList(nodules);
-    }
-
-    function drawNodulesOnCanvas(nodules) {
-        if (!currentImage) return;
-        // 重绘原始图像
-        currentCtx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-        for (let nod of nodules) {
-            // 绘制圆圈标记
-            currentCtx.beginPath();
-            currentCtx.arc(nod.x, nod.y, nod.radius, 0, 2 * Math.PI);
-            currentCtx.strokeStyle = '#ff3b3f';
-            currentCtx.lineWidth = 2.5;
-            currentCtx.stroke();
-            currentCtx.beginPath();
-            currentCtx.arc(nod.x, nod.y, nod.radius-1, 0, 2 * Math.PI);
-            currentCtx.strokeStyle = '#ffd966';
-            currentCtx.lineWidth = 1.5;
-            currentCtx.stroke();
-            // 标记尺寸文字
-            currentCtx.font = "bold 14px 'Inter'";
-            currentCtx.fillStyle = '#ffefc0';
-            currentCtx.shadowBlur = 4;
-            currentCtx.fillText(`${nod.diameterMm.toFixed(1)}mm`, nod.x+5, nod.y-5);
-            currentCtx.shadowBlur = 0;
-        }
-    }
-
-    function renderNoduleList(nodules) {
-        const container = document.getElementById('noduleListPanel');
-        if (!nodules.length) {
-            container.innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-            return;
-        }
-        let html = '';
-        nodules.forEach((nod, idx) => {
-            let sizeText = nod.diameterMm.toFixed(1) + ' mm';
-            html += `<div class="nodule-item">
-                        <span><strong>${translations[currentLang].nodule_item_prefix}${idx+1}</strong> (${sizeText})</span>
-                        <span><i class="fas fa-circle" style="color:#e67e22; font-size:12px;"></i> ${translations[currentLang].noduleSize}: ${nod.diameterMm.toFixed(1)} mm</span>
-                     </div>`;
-        });
-        container.innerHTML = html;
-    }
-
-    function updateRiskUI(riskScore, maxDiameter) {
-        const badgeDiv = document.getElementById('riskBadge');
-        let riskClass = '';
-        let riskLabel = '';
-        if (riskScore < 0.35) { riskClass = 'risk-low'; riskLabel = translations[currentLang].risk_low; }
-        else if (riskScore < 0.65) { riskClass = 'risk-mid'; riskLabel = translations[currentLang].risk_mid; }
-        else { riskClass = 'risk-high'; riskLabel = translations[currentLang].risk_high; }
-        badgeDiv.innerHTML = `<span class="risk-badge ${riskClass}"><i class="fas fa-chart-simple"></i> ${riskLabel} (${(riskScore*100).toFixed(0)}%)</span>`;
-        if (maxDiameter > 12) {
-            badgeDiv.innerHTML += `<div style="margin-top:8px; font-size:12px;"><i class="fas fa-clock"></i> ${currentLang === 'zh' ? '建议临床随访或进一步检查' : '임상 추적 또는 추가 검사 권장'}</div>`;
-        }
-    }
-
-    function clearCanvas() {
-        if (currentImage) {
-            currentCtx.drawImage(currentImage, 0, 0, canvas.width, canvas.height);
-        } else {
-            currentCtx.clearRect(0, 0, canvas.width, canvas.height);
-            currentCtx.fillStyle = "#eef2f0";
-            currentCtx.fillRect(0, 0, canvas.width, canvas.height);
-        }
-        currentAnalysisResult = { nodules: [], riskScore: 0, maxDiameter: 0 };
-        document.getElementById('noduleCountValue').innerText = '—';
-        document.getElementById('maxSizeValue').innerText = '—';
-        document.getElementById('riskLevelValue').innerText = '—';
-        document.getElementById('riskBadge').innerHTML = '';
-        document.getElementById('noduleListPanel').innerHTML = `<div style="text-align:center; color:#7c8f8c;">${translations[currentLang].noDataMsg}</div>`;
-    }
-
-    // 事件监听
-    uploadArea.addEventListener('click', () => fileInput.click());
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) handleImageUpload(e.target.files[0]);
-    });
-    uploadArea.addEventListener('dragover', (e) => { e.preventDefault(); uploadArea.style.borderColor = '#2c8f8c'; });
-    uploadArea.addEventListener('dragleave', () => { uploadArea.style.borderColor = '#8bb5b3'; });
-    uploadArea.addEventListener('drop', (e) => {
-        e.preventDefault();
-        uploadArea.style.borderColor = '#8bb5b3';
-        if (e.dataTransfer.files.length) handleImageUpload(e.dataTransfer.files[0]);
-    });
-    analyzeBtn.addEventListener('click', performAnalysis);
-    clearBtn.addEventListener('click', () => clearCanvas());
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', () => setLanguage(btn.getAttribute('data-lang')));
-    });
-    // 默认初始绘制占位
+    // 事件绑定
+    const uploadAreaDiv = document.getElementById('uploadArea');
+    const fileInputElem = document.getElementById('fileInput');
+    uploadAreaDiv.addEventListener('click',()=>fileInputElem.click());
+    fileInputElem.addEventListener('change',(e)=> { if(e.target.files.length) handleImage(e.target.files[0]); });
+    uploadAreaDiv.addEventListener('dragover',(e)=>e.preventDefault());
+    uploadAreaDiv.addEventListener('drop',(e)=>{ e.preventDefault(); if(e.dataTransfer.files.length) handleImage(e.dataTransfer.files[0]); });
+    document.getElementById('analyzeBtn').addEventListener('click', performAnalysis);
+    document.getElementById('clearBtn').addEventListener('click', ()=>{ if(currentImage){ctx.drawImage(currentImage,0,0,canvas.width,canvas.height);} clearAll(); });
+    document.querySelectorAll('.lang-btn').forEach(btn=>btn.addEventListener('click',()=>setLanguage(btn.getAttribute('data-lang'))));
     setLanguage('zh');
-    currentCtx.fillStyle = "#eef2f0";
-    currentCtx.fillRect(0, 0, canvas.width, canvas.height);
-    currentCtx.fillStyle = "#688b8a";
-    currentCtx.font = "14px Inter";
-    currentCtx.fillText("영상 대기 | 等待影像", 30, 60);
+    ctx.fillStyle = "#d9e2df";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.fillStyle = "#516e6b";
+    ctx.font = "14px Inter";
+    ctx.fillText("대기 | 等待影像", 30,50);
 </script>
 </body>
 </html>
